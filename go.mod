@@ -3,6 +3,7 @@ module github.com/sukhjit/lambda-mock-server
 go 1.13
 
 require (
+	github.com/Jeffail/gabs/v2 v2.3.0
 	github.com/asaskevich/govalidator v0.0.0-20200108200545-475eaeb16496
 	github.com/aws/aws-lambda-go v1.13.3
 	github.com/aws/aws-sdk-go v1.28.7

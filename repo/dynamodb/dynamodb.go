@@ -3,7 +3,6 @@ package dynamodb
 import (
 	"fmt"
 	"log"
-	"time"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
@@ -70,7 +69,7 @@ func (d *document) Add(document *model.Document) error {
 				S: aws.String(fmt.Sprintf("%v", document.Body)),
 			},
 			"date": &dynamodb.AttributeValue{
-				S: aws.String(time.Now().Format("2006-01-02 15:04:05")),
+				S: aws.String(document.Date),
 			},
 		},
 	})

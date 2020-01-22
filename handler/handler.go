@@ -2,11 +2,13 @@ package handler
 
 import (
 	"errors"
+	"fmt"
 	"log"
 	"net/http"
 	"os"
 	"time"
 
+	"github.com/Jeffail/gabs/v2"
 	"github.com/gin-gonic/gin"
 	"github.com/sukhjit/lambda-mock-server/model"
 	"github.com/sukhjit/lambda-mock-server/repo"
@@ -42,7 +44,10 @@ func statusHandle(c *gin.Context) {
 }
 
 func addDocHandle(c *gin.Context) (interface{}, int, error) {
-	document := &model.Document{}
+	document := &model.Document{
+		Date: time.Now().Format("2006-01-02 15:04:05"),
+	}
+
 	if err := c.BindJSON(&document); err != nil {
 		return nil, http.StatusBadRequest, err
 	}
@@ -52,14 +57,16 @@ func addDocHandle(c *gin.Context) (interface{}, int, error) {
 		return nil, http.StatusBadRequest, err
 	}
 
+	// convert interface to json string
+	document.Body = gabs.Wrap(document.Body).String()
+
 	err = documentRepo.Add(document)
 	if err != nil {
 		return nil, http.StatusInternalServerError, err
 	}
 
 	return gin.H{
-		"todo": "add",
-		"info": document,
+		"created": document,
 	}, http.StatusOK, nil
 }
 
@@ -75,7 +82,17 @@ func getDocHandle(c *gin.Context) (interface{}, int, error) {
 		return nil, http.StatusNotFound, errDocumentNotFound
 	}
 
-	return document, http.StatusOK, nil
+	// convert json string to json
+	jsonParsed, err := gabs.ParseJSON([]byte(fmt.Sprintf("%v", document.Body)))
+	if err != nil {
+		return nil, http.StatusBadRequest, errors.New("Failed to parse json")
+	}
+
+	document.Body = jsonParsed
+
+	return gin.H{
+		"document": document,
+	}, http.StatusOK, nil
 }
 
 func validateDocument(document *model.Document) error {
