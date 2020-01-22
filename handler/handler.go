@@ -34,6 +34,7 @@ func New(awsRegion, documentTable string) *gin.Engine {
 	router.POST("/add", responseHandler(addDocHandle))
 	router.GET("/get/:id", responseHandler(getDocHandle))
 	router.GET("/delay", responseHandler(delayHandle))
+	router.DELETE("/get/:id", responseHandler(deleteDocHandle))
 
 	return router
 }
@@ -94,6 +95,28 @@ func getDocHandle(c *gin.Context) (interface{}, int, error) {
 
 	return gin.H{
 		"document": document,
+	}, http.StatusOK, nil
+}
+
+func deleteDocHandle(c *gin.Context) (interface{}, int, error) {
+	docID := c.Param("id")
+
+	document, err := documentRepo.Get(docID)
+	if err != nil {
+		return nil, http.StatusInternalServerError, err
+	}
+
+	if len(document.ID) == 0 {
+		return nil, http.StatusNotFound, errDocumentNotFound
+	}
+
+	err = documentRepo.Delete(docID)
+	if err != nil {
+		return nil, http.StatusInternalServerError, err
+	}
+
+	return gin.H{
+		"info": "deleted",
 	}, http.StatusOK, nil
 }
 

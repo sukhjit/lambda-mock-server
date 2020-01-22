@@ -2,7 +2,6 @@ package dynamodb
 
 import (
 	"fmt"
-	"log"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
@@ -35,7 +34,6 @@ func New(awsRegion, docTable string) repo.Document {
 }
 
 func (d *document) Get(id string) (*model.Document, error) {
-	log.Println("Table", d.documentTable)
 	result, err := d.db.GetItem(&dynamodb.GetItemInput{
 		TableName: aws.String(d.documentTable),
 		Key: map[string]*dynamodb.AttributeValue{
@@ -70,6 +68,19 @@ func (d *document) Add(document *model.Document) error {
 			},
 			"date": &dynamodb.AttributeValue{
 				S: aws.String(document.Date),
+			},
+		},
+	})
+
+	return err
+}
+
+func (d *document) Delete(id string) error {
+	_, err := d.db.DeleteItem(&dynamodb.DeleteItemInput{
+		TableName: aws.String(d.documentTable),
+		Key: map[string]*dynamodb.AttributeValue{
+			"id": {
+				S: aws.String(id),
 			},
 		},
 	})
