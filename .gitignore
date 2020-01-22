@@ -1,0 +1,6 @@
+.env
+.serverless
+.vscode
+bin/
+main
+node_modules/

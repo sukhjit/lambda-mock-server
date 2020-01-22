@@ -1,0 +1,125 @@
+package handler
+
+import (
+	"errors"
+	"log"
+	"net/http"
+	"os"
+	"time"
+
+	"github.com/gin-gonic/gin"
+	"github.com/sukhjit/lambda-mock-server/model"
+	"github.com/sukhjit/lambda-mock-server/repo"
+	"github.com/sukhjit/lambda-mock-server/repo/dynamodb"
+	"github.com/sukhjit/util"
+)
+
+var (
+	errorLogger         = log.New(os.Stderr, "[ERROR] ", log.Llongfile)
+	documentRepo        repo.Document
+	errInvalidID        = errors.New("Invalid document id")
+	errDocumentNotFound = errors.New("Document not found")
+)
+
+// New will create and return handler
+func New(awsRegion, documentTable string) *gin.Engine {
+	router := gin.Default()
+
+	documentRepo = dynamodb.New(awsRegion, documentTable)
+
+	router.GET("/status", statusHandle)
+	router.POST("/add", responseHandler(addDocHandle))
+	router.GET("/get/:id", responseHandler(getDocHandle))
+
+	return router
+}
+
+func statusHandle(c *gin.Context) {
+	c.JSON(http.StatusOK, gin.H{
+		"status": "ok",
+		"time":   time.Now().Format("2006-01-02 15:04:05"),
+	})
+}
+
+func addDocHandle(c *gin.Context) (interface{}, int, error) {
+	document := &model.Document{}
+	if err := c.BindJSON(&document); err != nil {
+		return nil, http.StatusBadRequest, err
+	}
+
+	err := validateDocument(document)
+	if err != nil {
+		return nil, http.StatusBadRequest, err
+	}
+
+	err = documentRepo.Add(document)
+	if err != nil {
+		return nil, http.StatusInternalServerError, err
+	}
+
+	return gin.H{
+		"todo": "add",
+		"info": document,
+	}, http.StatusOK, nil
+}
+
+func getDocHandle(c *gin.Context) (interface{}, int, error) {
+	docID := c.Param("id")
+
+	document, err := documentRepo.Get(docID)
+	if err != nil {
+		return nil, http.StatusInternalServerError, err
+	}
+
+	if len(document.ID) == 0 {
+		return nil, http.StatusNotFound, errDocumentNotFound
+	}
+
+	return document, http.StatusOK, nil
+}
+
+func validateDocument(document *model.Document) error {
+	if len(document.ID) == 0 {
+		return errors.New("ID cannot be empty")
+	}
+
+	if document.Body == nil {
+		return errors.New("Body cannot be empty")
+	}
+
+	return nil
+}
+
+func responseHandler(h func(*gin.Context) (interface{}, int, error)) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		data, code, err := h(c)
+		if err != nil {
+			payload := errorResponse(code, err)
+
+			c.JSON(code, payload)
+
+			return
+		}
+
+		c.JSON(code, data)
+	}
+}
+
+func errorResponse(code int, err error) map[string]string {
+	// not 5xx error
+	if code < http.StatusInternalServerError {
+		return map[string]string{
+			"error": err.Error(),
+		}
+	}
+
+	// 5xx error
+	errID := util.RandomString(8)
+
+	errorLogger.Printf("ErrorID: %s, %v", errID, err)
+
+	return map[string]string{
+		"error": "internal server error",
+		"code":  errID,
+	}
+}
