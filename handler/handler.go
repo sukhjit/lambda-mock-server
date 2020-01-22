@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strconv"
 	"time"
 
 	"github.com/Jeffail/gabs/v2"
@@ -32,6 +33,7 @@ func New(awsRegion, documentTable string) *gin.Engine {
 	router.GET("/status", statusHandle)
 	router.POST("/add", responseHandler(addDocHandle))
 	router.GET("/get/:id", responseHandler(getDocHandle))
+	router.GET("/delay", responseHandler(delayHandle))
 
 	return router
 }
@@ -93,6 +95,25 @@ func getDocHandle(c *gin.Context) (interface{}, int, error) {
 	return gin.H{
 		"document": document,
 	}, http.StatusOK, nil
+}
+
+func delayHandle(c *gin.Context) (interface{}, int, error) {
+	waitTimeStr := c.DefaultQuery("time", "2")
+	waitTime, err := strconv.Atoi(waitTimeStr)
+	if err != nil {
+		return nil, http.StatusBadRequest, errors.New("Invalid time, should be between 1-9")
+	}
+	if waitTime < 1 {
+		waitTime = 1
+	}
+	if waitTime > 9 {
+		waitTime = 9
+	}
+	time.Sleep(time.Duration(waitTime) * time.Second)
+
+	result := fmt.Sprintf("wait done for %d seconds... Usage: ?time=n", waitTime)
+
+	return result, http.StatusOK, nil
 }
 
 func validateDocument(document *model.Document) error {
