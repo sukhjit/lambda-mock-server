@@ -1,3 +1,10 @@
+BUILD_ENV := CGO_ENABLED=0 GOOS=linux GOARCH=amd64
+
+LDFLAGS=-ldflags "-s -w"
+
+dev:
+	$(BUILD_ENV) go build -o bin/main main.go
+
 clean:
 	rm -rf .serverless ./bin
 

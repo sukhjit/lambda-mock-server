@@ -1,0 +1,10 @@
+version: "3.7"
+services:
+    mockserverapi:
+        container_name: mockserverapi
+        build:
+            context: .
+        ports:
+            - "8000:8000"
+        volumes:
+            - ./:/app

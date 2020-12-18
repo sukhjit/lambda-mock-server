@@ -12,19 +12,13 @@ import (
 )
 
 var (
-	ginLambda     *ginadapter.GinLambda
-	isLambda      bool
-	router        *gin.Engine
-	awsRegion     string
-	documentTable string
+	ginLambda *ginadapter.GinLambda
+	isLambda  bool
+	router    *gin.Engine
 )
 
 func initEnv() {
 	_ = godotenv.Load()
-
-	awsRegion = getEnv("AWS_REGION", "ap-southeast-2")
-
-	documentTable = getEnv("DOCUMENT_TABLE_NAME", "lambda-mock-server-document")
 
 	isLambda = false
 	if os.Getenv("WEB") == "" {
@@ -35,7 +29,7 @@ func initEnv() {
 func main() {
 	initEnv()
 
-	router = handler.New(awsRegion, documentTable)
+	router = handler.New()
 
 	if isLambda {
 		lambda.Start(lambdaHandler)
@@ -50,12 +44,4 @@ func lambdaHandler(req events.APIGatewayProxyRequest) (events.APIGatewayProxyRes
 	}
 
 	return ginLambda.Proxy(req)
-}
-
-func getEnv(key string, defaultVal string) string {
-	if value, exists := os.LookupEnv(key); exists {
-		return value
-	}
-
-	return defaultVal
 }
