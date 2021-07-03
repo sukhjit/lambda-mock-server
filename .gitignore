@@ -3,4 +3,5 @@
 .vscode
 bin/
 main
+mock-server
 node_modules/

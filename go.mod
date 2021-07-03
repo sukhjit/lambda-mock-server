@@ -9,6 +9,7 @@ require (
 	github.com/aws/aws-sdk-go v1.28.7
 	github.com/awslabs/aws-lambda-go-api-proxy v0.5.0
 	github.com/gin-gonic/gin v1.5.0
+	github.com/githubnemo/CompileDaemon v1.3.0 // indirect
 	github.com/joho/godotenv v1.3.0
 	github.com/sukhjit/util v0.0.0-20190208061849-7cfbe0dba52a
 )
