@@ -40,7 +40,7 @@ func delayHandle(c *gin.Context) (interface{}, int, error) {
 
 	waitTime, err := strconv.Atoi(waitTimeStr)
 	if err != nil {
-		return nil, http.StatusBadRequest, errors.New("Invalid time, should be between 1-9")
+		return nil, http.StatusBadRequest, errors.New("invalid time, should be between 1-9")
 	}
 	if waitTime < 1 {
 		waitTime = 1

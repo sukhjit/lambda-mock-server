@@ -14,11 +14,32 @@ make deploy
 
 ## Local Development
 
-Requires npm, golang >= 1.13 and dynamodb table created in AWS
-```
-export AWS_ACCESS_KEY_ID=the-key && export AWS_SECRET_ACCESS_KEY=the-secret
-export AWS_REGION="us-east-1"
-export DOCUMENT_TABLE_NAME="dynamodb-table-name-in-aws"
+Requires npm, golang >= 1.13
 
-go run main.go
+Available at: http://localhost:8000
+
+```
+cp .env.dist .env
+
+# hot reload
+cicd/bin/local-dev.sh
+```
+
+### Using Docker compose
+
+```
+docker-compose up
+
+docker-compose exec api bash
+
+cp .env.dist .env
+
+# hot reload
+cicd/bin/local-dev.sh
+```
+
+## Serving
+
+```
+https://rbait02cw7.execute-api.ap-southeast-2.amazonaws.com/prod
 ```
