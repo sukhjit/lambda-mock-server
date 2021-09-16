@@ -1,7 +1,7 @@
 .env
 .serverless
 .vscode
-bin/
+./bin/
 main
 mock-server
 node_modules/

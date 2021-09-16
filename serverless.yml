@@ -1,6 +1,6 @@
 service: lambda-mock-server
 
-frameworkVersion: ">=1.28.0 <2.0.0"
+frameworkVersion: ">=2.0.0"
 
 provider:
     name: aws
@@ -9,14 +9,16 @@ provider:
     region: ap-southeast-2
     memorySize: 128
     timeout: 10
-    iamManagedPolicies:
-        - "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+    lambdaHashingVersion: 20201221
+    iam:
+        role:
+            managedPolicies:
+                - "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
 
 package:
-    exclude:
-        - ./**
-    include:
-        - ./bin/**
+    patterns:
+        - '!./**'
+        - './bin/**'
 
 functions:
     api:

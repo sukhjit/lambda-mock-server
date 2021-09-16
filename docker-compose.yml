@@ -1,7 +1,7 @@
 version: "3.7"
 services:
     api:
-        image: golang:1.16-alpine
+        image: golang:1.16-stretch
         entrypoint: cicd/bin/entrypoint.sh
         ports:
             - 8000:8000
