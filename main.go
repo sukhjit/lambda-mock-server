@@ -1,40 +1,33 @@
 package main
 
 import (
+	"log"
 	"os"
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
 	ginadapter "github.com/awslabs/aws-lambda-go-api-proxy/gin"
 	"github.com/gin-gonic/gin"
-	"github.com/joho/godotenv"
 	"github.com/sukhjit/lambda-mock-server/handler"
 )
 
 var (
 	ginLambda *ginadapter.GinLambda
-	isLambda  bool
 	router    *gin.Engine
 )
 
-func initEnv() {
-	_ = godotenv.Load()
-
-	isLambda = false
-	if os.Getenv("WEB") == "" {
-		isLambda = true
-	}
-}
-
 func main() {
-	initEnv()
+	isLambda := len(os.Getenv("AWS_LAMBDA_FUNCTION_NAME")) > 0
 
 	router = handler.New()
 
 	if isLambda {
 		lambda.Start(lambdaHandler)
 	} else {
-		router.Run(":8000")
+		if err := router.Run(":8000"); err != nil {
+			log.Fatal(err)
+		}
+
 	}
 }
 

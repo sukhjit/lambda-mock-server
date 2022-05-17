@@ -1,7 +1,17 @@
-.env
-.serverless
+# Mac
+.DS_Store
+
+# IDE
+.idea
 .vscode
-./bin/
-main
-mock-server
+
+# Golang
+bin/
+dist/
+vendor/
+
+# Node
 node_modules/
+
+# Serverless
+.serverless/
