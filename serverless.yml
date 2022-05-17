@@ -1,6 +1,6 @@
 service: lambda-mock-server
 
-frameworkVersion: ">=2.0.0"
+frameworkVersion: ">=3.17.0"
 
 provider:
     name: aws
