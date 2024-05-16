@@ -8,14 +8,12 @@ Make sure your AWS credentials are exported. Example:
 ```
 export AWS_ACCESS_KEY_ID=the-key && export AWS_SECRET_ACCESS_KEY=the-secret
 
-npm install
-
-make deploy
+make tf-deploy
 ```
 
 ## Local Development
 
-Requires golang >= 1.18
+Requires golang >= 1.22
 
 ```
 make dev
@@ -26,9 +24,9 @@ Available at: http://localhost:8000
 ### Using Docker compose
 
 ```
-docker-compose up
+make up
 
-docker-compose exec api bash
+docker-compose exec api /bin/bash
 
 make dev
 ```

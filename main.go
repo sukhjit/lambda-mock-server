@@ -17,7 +17,7 @@ var (
 )
 
 func main() {
-	isLambda := len(os.Getenv("AWS_LAMBDA_FUNCTION_NAME")) > 0
+	isLambda := os.Getenv("AWS_LAMBDA_FUNCTION_NAME") != ""
 
 	router = handler.New()
 
@@ -27,7 +27,6 @@ func main() {
 		if err := router.Run(":8000"); err != nil {
 			log.Fatal(err)
 		}
-
 	}
 }
 

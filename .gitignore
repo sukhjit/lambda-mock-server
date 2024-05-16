@@ -6,12 +6,11 @@
 .vscode
 
 # Golang
-bin/
 dist/
 vendor/
 
-# Node
-node_modules/
-
-# Serverless
-.serverless/
+# Terraform
+*.tfstate*
+.terraform
+.terraform.lock.hcl
+tfplan

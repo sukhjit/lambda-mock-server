@@ -6,11 +6,12 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"slices"
 	"strconv"
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/sukhjit/util"
+	"github.com/sukhjit/util/pkg/stringz"
 )
 
 var (
@@ -24,6 +25,7 @@ func New() *gin.Engine {
 	router.GET("/status", statusHandle)
 	router.GET("/delay", responseHandler(delayHandle))
 	router.POST("/delay", responseHandler(delayHandle))
+	router.GET("/sort", sortItemsHandle)
 
 	return router
 }
@@ -56,6 +58,20 @@ func delayHandle(c *gin.Context) (interface{}, int, error) {
 	return result, http.StatusOK, nil
 }
 
+func sortItemsHandle(ctx *gin.Context) {
+	items := struct {
+		Items []string `json:"items"`
+	}{}
+	if err := ctx.BindJSON(&items); err != nil {
+		ctx.JSON(400, err.Error())
+		return
+	}
+
+	slices.Sort(items.Items)
+
+	ctx.JSON(200, items.Items)
+}
+
 func responseHandler(h func(*gin.Context) (interface{}, int, error)) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		data, code, err := h(c)
@@ -80,7 +96,7 @@ func errorResponse(code int, err error) map[string]string {
 	}
 
 	// 5xx error
-	errID := util.RandomString(8)
+	errID := stringz.RandomString(8)
 
 	errorLogger.Printf("ErrorID: %s, %v", errID, err)
 
