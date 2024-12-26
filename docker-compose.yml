@@ -1,6 +1,6 @@
 services:
     api:
-        image: golang:1.22-bookworm
+        image: golang:1.23-bookworm
         entrypoint: cicd/bin/entrypoint.sh
         ports:
             - 8000:8000
