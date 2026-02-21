@@ -54,3 +54,7 @@ resource "aws_apigatewayv2_stage" "site" {
     Name = local.app_name
   })
 }
+
+output "api_url" {
+  value = aws_apigatewayv2_api.api.api_endpoint
+}

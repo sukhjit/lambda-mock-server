@@ -14,9 +14,7 @@ import (
 	"github.com/sukhjit/util/pkg/stringz"
 )
 
-var (
-	errorLogger = log.New(os.Stderr, "[ERROR] ", log.Llongfile)
-)
+var errorLogger = log.New(os.Stderr, "[ERROR] ", log.Llongfile)
 
 // New will create and return handler
 func New() *gin.Engine {
@@ -37,7 +35,7 @@ func statusHandle(c *gin.Context) {
 	})
 }
 
-func delayHandle(c *gin.Context) (interface{}, int, error) {
+func delayHandle(c *gin.Context) (any, int, error) {
 	waitTimeStr := c.DefaultQuery("time", "2")
 
 	waitTime, err := strconv.Atoi(waitTimeStr)
@@ -72,7 +70,7 @@ func sortItemsHandle(ctx *gin.Context) {
 	ctx.JSON(200, items.Items)
 }
 
-func responseHandler(h func(*gin.Context) (interface{}, int, error)) gin.HandlerFunc {
+func responseHandler(h func(*gin.Context) (any, int, error)) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		data, code, err := h(c)
 		if err != nil {

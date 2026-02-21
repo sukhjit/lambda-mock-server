@@ -1,9 +1,0 @@
-services:
-    api:
-        image: golang:1.23-bookworm
-        entrypoint: cicd/bin/entrypoint.sh
-        ports:
-            - 8000:8000
-        volumes:
-            - .:/app
-        working_dir: /app

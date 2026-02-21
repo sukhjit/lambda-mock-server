@@ -14,20 +14,10 @@ make tf-deploy
 
 ## Local Development
 
-Requires golang >= 1.23
+Requires golang >= 1.26
 
 ```
-make dev
+./scripts/local-run.sh
 ```
 
 Available at: http://localhost:8000
-
-### Using Docker compose
-
-```
-make up
-
-docker-compose exec api /bin/bash
-
-make dev
-```
