@@ -75,7 +75,7 @@ resource "aws_lambda_function" "rest_api" {
   handler          = "bootstrap"
   source_code_hash = data.archive_file.api.output_base64sha256
   role             = aws_iam_role.app_role.arn
-  runtime          = "provided.al2"
+  runtime          = "provided.al2023"
   memory_size      = 256
   timeout          = 30
   architectures    = ["arm64"]

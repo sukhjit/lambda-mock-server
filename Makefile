@@ -3,19 +3,12 @@ goBuild=CGO_ENABLED=0 GOARCH=arm64 GOOS=linux go build -tags lambda.norpc -trimp
 pwdDir=$(shell pwd)
 distDir=$(pwdDir)/dist
 binaryOutputDir=$(distDir)/bin
-lintVersion=v1.58.1
+lintVersion=v2.9.0
 lintURL=https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh
 linter=$(distDir)/golangci-lint
 terraformer=$(distDir)/terraform
 terraformVersion=1.1.9
 terraformURL="https://releases.hashicorp.com/terraform/$(terraformVersion)/terraform_$(terraformVersion)_linux_amd64.zip"
-
-# docker
-up:
-	@docker-compose up --build -d api
-
-down:
-	@docker-compose down -v
 
 # dev
 lint-install:
