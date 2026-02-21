@@ -18,6 +18,13 @@ lint-install:
 lint: lint-install
 	@$(linter) run -c .golangci.yml -v ./...
 
+vuln-check-install:
+	@mkdir -p $(binaryOutputDir)
+	@[ -f "$(binaryOutputDir)/govulncheck" ] || GOBIN=$(binaryOutputDir) go install golang.org/x/vuln/cmd/govulncheck@latest
+
+vuln-check: vuln-check-install
+	@$(binaryOutputDir)/govulncheck -show verbose ./...
+
 compile-daemon-install:
 	@[ -f "$(distDir)/CompileDaemon" ] || GOBIN=$(distDir) go install github.com/githubnemo/CompileDaemon@v1.4.0
 
